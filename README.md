@@ -113,20 +113,108 @@ required acknowledgment.
   limiting are not yet implemented.
 - Deployment and production hardening remain outside the MVP.
 
-## Possible future filings
+## Grand design: cross-protocol retrieval bureaucracy
 
-Future committees may consider:
+The planned destination of B.L.O.A.T. is not merely a longer URL. It is a
+protocol obstacle course in which each service discloses only enough information
+to inconvenience the applicant at the next stage.
+
+```text
+Submit normal URL
+        ↓
+Receive absurdly long HTTP URL
+        ↓
+Initial Administrative Referral
+HTTP withholds the destination and issues a Gopher URL
+        ↓
+Legacy Transport Instruction Document
+Gopher provides hexadecimal bytes and Echo instructions
+        ↓
+Binary Round-Trip Confirmation Procedure
+Send bytes to echo.kgivler.com:7 and receive them unchanged
+        ↓
+Decode the returned bytes as UTF-8
+        ↓
+Final Destination Disclosure Service
+Finger looks up the resulting token and finally reveals the URL
+```
+
+The protocol stages have been assigned the following departmental names:
+
+| Protocol | Administrative function |
+| --- | --- |
+| HTTP | Initial Administrative Referral |
+| Gopher | Legacy Transport Instruction Document |
+| Echo | Binary Round-Trip Confirmation Procedure |
+| Finger | Final Destination Disclosure Service |
+
+### One token, several departments
+
+A single fixed-length token can drive the entire procedure:
+
+```text
+Token → Original URL
+```
+
+For example:
+
+```text
+42fd9e6b57384060a367e93e950283094ea4dbe7a467496e930f5bb68d021eed
+```
+
+The Gopher document renders the UTF-8 bytes of that token as hexadecimal:
+
+```text
+34 32 66 64 39 65 36 62 35 37 33 38 34 30 36 30
+61 33 36 37 65 39 33 65 39 35 30 32 38 33 30 39
+34 65 61 34 64 62 65 37 61 34 36 37 34 39 36 65
+39 33 30 66 35 62 62 36 38 64 30 32 31 65 65 64
+```
+
+Echo returns those bytes unchanged. Decoding them as UTF-8 yields the original
+64-character token, which becomes:
+
+```console
+finger 42fd9e6b57384060a367e93e950283094ea4dbe7a467496e930f5bb68d021eed@finger.kgivler.com
+```
+
+Finger can then use the token to retrieve the original URL:
+
+```text
+Login: 42fd9e6b57384060a367e93e950283094ea4dbe7a467496e930f5bb68d021eed
+Name: External Hypertext Resource Disclosure Record
+Directory: /world/wide/web
+Shell: /usr/bin/curl
+
+Following completion of the approved retrieval procedure,
+the requested destination is:
+
+https://example.com/cats
+
+B.L.O.A.T. thanks you for tolerating the process.
+```
+
+No separate Echo challenge model is required initially. A sufficiently
+insubordinate user can bypass Echo by decoding the Gopher bytes directly; that
+is acceptable because Echo provides ceremonial friction, not security.
+
+Maximum Administrative Burden may eventually require the Echo service to record
+an approved round trip before Finger releases the destination. This would make
+the useless step technically mandatory, which is the natural endpoint of
+enterprise governance.
+
+### Planned filings
 
 - Persistent case storage and case revocation
+- Gopher, Echo, and Finger services sharing the case-token registry
 - Rate limiting and abuse-reporting controls
 - Additional amplification levels, including Maximum Administrative Burden
 - Unnecessary progress indicators and expanded acknowledgment procedures
-- Alternative retrieval procedures involving Gopher, Finger, Echo, or other
-  obsolete and deeply inconvenient Internet services
+- Optional proof that the ceremonial Echo round trip actually occurred
 
-These items are possibilities, not commitments. No department should interpret
-their appearance in this document as approval, scheduling, funding, awareness,
-or acceptance of responsibility.
+These items describe the intended direction, not the current MVP. No department
+should interpret their appearance in this document as approval, scheduling,
+funding, awareness, or acceptance of responsibility.
 
 ## Security posture
 
@@ -153,6 +241,18 @@ acknowledge a case number, review a transfer notice, or wait for an unnecessary
 administrative determination.
 
 B.L.O.A.T. intends to correct this market failure.
+
+## Emotional impact assessment
+
+B.L.O.A.T. feels like a joke that accidentally discovered a legitimate systems
+architecture. It is playful, committed to its premise, and just plausible
+enough to be dangerous. Every additional protocol makes the design more
+technically coherent and less reasonable to use—the exact combination that
+makes the project delightful.
+
+It is no longer merely a URL lengthener. It is a **cross-protocol URL retrieval
+bureaucracy**, which is much more distinctive and much stupider in exactly the
+right way.
 
 ## License
 
