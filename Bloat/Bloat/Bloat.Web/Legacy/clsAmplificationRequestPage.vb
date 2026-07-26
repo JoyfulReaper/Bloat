@@ -100,16 +100,17 @@ Public NotInheritable Class AmplificationRequestPage
 
                                     <select
                                         id="amplificationLevel"
-                                        name="amplificationLevel"
-                                        disabled="disabled">
-                                        <option selected="selected">
+                                        name="amplificationLevel">
+                                        <option
+                                            value="enterprise"
+                                            selected="selected">
                                             Enterprise Procedure
                                         </option>
                                     </select>
                                 </div>
 
                                 <div class="form-row">
-                                    <button type="submit" disabled="disabled">
+                                    <button type="submit">
                                         SUBMIT REQUEST FOR PROCESSING
                                     </button>
                                 </div>

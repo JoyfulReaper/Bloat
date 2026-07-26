@@ -1,5 +1,5 @@
 ﻿'
-' $Id: modEnterpriseApplicationBootstrapper.vb,v 1.17 2004/11/09 02:14:51 svc_build Exp $
+' $Id: modEnterpriseApplicationBootstrapper.vb,v 1.18 2004/11/10 09:03:17 svc_build Exp $
 ' $Source: /CorporateSystems/BLOAT/Web/App_Code/modEnterpriseApplicationBootstrapper.vb $
 '
 ' NOTICE:
@@ -13,7 +13,12 @@
 ' Revision 1.13:
 ' Dennis no longer works here.
 '
+' Revision 1.18:
+' Form processing restored from backup tape BLOAT-TAPE-19B.
+' Tape contained several unidentified human hairs.
+'
 
+Imports Bloat.Core.Urls
 Imports Microsoft.AspNetCore.Builder
 Imports Microsoft.AspNetCore.Http
 
@@ -32,11 +37,34 @@ Public Module EnterpriseApplicationBootstrapper
         application.MapGet(
             "/",
             Function()
-                Return Results.Content(
-                    AmplificationRequestPage.Render(),
-                    "text/html; charset=utf-8")
+                Return Results.Content(AmplificationRequestPage.Render(), "text/html; charset=utf-8")
             End Function)
 
+        application.MapPost("/amplification-request",
+            CType(AddressOf HandleAmplificationRequestAsync,
+                Func(
+                    Of HttpRequest,
+                    DestinationUrlValidator,
+                    Task(Of IResult))))
+
     End Sub
+
+    Private Async Function HandleAmplificationRequestAsync(request As HttpRequest, validator As DestinationUrlValidator) As Task(Of IResult)
+
+        Dim form = Await request.ReadFormAsync(request.HttpContext.RequestAborted)
+        Dim submittedUrl = form("destinationUrl").ToString()
+        Dim validation = validator.Validate(submittedUrl)
+
+        Dim responseStatus = If(
+            validation.IsValid,
+            StatusCodes.Status200OK,
+            StatusCodes.Status400BadRequest)
+
+        Return Results.Content(
+            AmplificationPreliminaryReviewPage.Render(submittedUrl, validation),
+            contentType:="text/html; charset=utf-8",
+            statusCode:=responseStatus)
+
+    End Function
 
 End Module
