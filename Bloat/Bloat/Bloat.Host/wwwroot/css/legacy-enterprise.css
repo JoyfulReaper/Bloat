@@ -1,0 +1,286 @@
+﻿/*
+ * $Id: legacy-enterprise.css,v 4.72 2003/08/19 14:37:02 front_end_team Exp $
+ * $Source: /CorporateSystems/BLOAT/WebAssets/Styles/legacy-enterprise.css $
+ *
+ * CORPORATE PRESENTATION STANDARD BPS-7
+ *
+ * WARNING:
+ * Do not change the gray background. The training manual screenshots
+ * were printed in 2004 and cannot be regenerated.
+ *
+ * Historical deployment account:
+ * BLOATDOMAIN\svc_webdeploy
+ *
+ * Password removed pursuant to incident SEC-2007-0118.
+ * See sealed envelope in cabinet B-14 if restoration is required.
+ */
+
+:root {
+    font-family: Tahoma, "MS Sans Serif", Arial, sans-serif;
+    color: #000;
+    background: #008080;
+    font-size: 14px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    min-width: 320px;
+    margin: 0;
+    padding: 16px;
+    background: #008080;
+}
+
+button,
+input,
+select {
+    font: inherit;
+}
+
+.enterprise-window {
+    width: min(980px, 100%);
+    margin: 0 auto;
+    background: #c0c0c0;
+    border-top: 2px solid #fff;
+    border-left: 2px solid #fff;
+    border-right: 2px solid #202020;
+    border-bottom: 2px solid #202020;
+    box-shadow: 3px 3px 0 #000;
+}
+
+.title-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 30px;
+    margin: 3px;
+    padding: 4px 7px;
+    color: #fff;
+    background: #000080;
+    font-weight: bold;
+    letter-spacing: 0.02em;
+}
+
+.title-bar-controls {
+    display: flex;
+    gap: 3px;
+}
+
+.title-bar-button {
+    display: inline-grid;
+    width: 21px;
+    height: 20px;
+    place-items: center;
+    color: #000;
+    background: #c0c0c0;
+    border-top: 2px solid #fff;
+    border-left: 2px solid #fff;
+    border-right: 2px solid #202020;
+    border-bottom: 2px solid #202020;
+    font-size: 11px;
+    line-height: 1;
+}
+
+.enterprise-header {
+    padding: 18px 20px 14px;
+    border-bottom: 1px solid #808080;
+}
+
+    .enterprise-header h1 {
+        margin: 0;
+        font-family: "Times New Roman", serif;
+        font-size: clamp(2rem, 5vw, 3rem);
+        letter-spacing: 0.08em;
+    }
+
+    .enterprise-header .expanded-name {
+        margin: 6px 0;
+        font-weight: bold;
+    }
+
+    .enterprise-header .tagline {
+        margin: 6px 0 0;
+        font-family: "Times New Roman", serif;
+        font-style: italic;
+    }
+
+.system-metadata {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border-top: 1px solid #fff;
+    border-bottom: 1px solid #808080;
+    background: #d4d0c8;
+}
+
+.metadata-item {
+    padding: 6px 9px;
+    border-right: 1px solid #808080;
+    font-family: "Courier New", monospace;
+    font-size: 12px;
+}
+
+    .metadata-item:last-child {
+        border-right: 0;
+    }
+
+.workspace {
+    padding: 14px;
+}
+
+.panel {
+    border-top: 2px solid #808080;
+    border-left: 2px solid #808080;
+    border-right: 2px solid #fff;
+    border-bottom: 2px solid #fff;
+    background: #c0c0c0;
+}
+
+.panel-title {
+    margin: 0;
+    padding: 5px 8px;
+    color: #fff;
+    background: #000080;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.panel-content {
+    padding: 16px;
+}
+
+.status-box {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 18px;
+    padding: 7px 9px;
+    border-top: 2px solid #808080;
+    border-left: 2px solid #808080;
+    border-right: 2px solid #fff;
+    border-bottom: 2px solid #fff;
+    background: #fff;
+    font-family: "Courier New", monospace;
+}
+
+.status-label {
+    font-weight: bold;
+}
+
+.status-value {
+    color: #800000;
+    font-weight: bold;
+}
+
+.form-row {
+    margin-bottom: 15px;
+}
+
+    .form-row label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+
+.form-help {
+    margin: 5px 0 0;
+    font-size: 12px;
+}
+
+input,
+select {
+    max-width: 100%;
+    padding: 5px 6px;
+    color: #000;
+    background: #fff;
+    border-top: 2px solid #404040;
+    border-left: 2px solid #404040;
+    border-right: 2px solid #fff;
+    border-bottom: 2px solid #fff;
+}
+
+    input[type="url"] {
+        width: 100%;
+        font-family: "Courier New", monospace;
+    }
+
+button {
+    padding: 6px 14px;
+    color: #000;
+    background: #c0c0c0;
+    border-top: 2px solid #fff;
+    border-left: 2px solid #fff;
+    border-right: 2px solid #202020;
+    border-bottom: 2px solid #202020;
+    font-weight: bold;
+}
+
+    button:active:not(:disabled) {
+        border-top-color: #202020;
+        border-left-color: #202020;
+        border-right-color: #fff;
+        border-bottom-color: #fff;
+    }
+
+    button:disabled,
+    select:disabled {
+        color: #808080;
+        cursor: not-allowed;
+        text-shadow: 1px 1px #fff;
+    }
+
+.administrative-notice {
+    margin-top: 18px;
+    padding: 9px;
+    border: 1px solid #808080;
+    background: #ffffe1;
+    font-size: 12px;
+}
+
+    .administrative-notice strong {
+        display: block;
+        margin-bottom: 4px;
+    }
+
+.enterprise-footer {
+    padding: 8px;
+    border-top: 1px solid #fff;
+}
+
+.status-bar {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 4px;
+}
+
+.status-bar-item {
+    padding: 4px 7px;
+    border-top: 2px solid #808080;
+    border-left: 2px solid #808080;
+    border-right: 2px solid #fff;
+    border-bottom: 2px solid #fff;
+    font-size: 11px;
+}
+
+@media (max-width: 680px) {
+    body {
+        padding: 5px;
+    }
+
+    .system-metadata,
+    .status-bar {
+        grid-template-columns: 1fr;
+    }
+
+    .metadata-item {
+        border-right: 0;
+        border-bottom: 1px solid #808080;
+    }
+
+    .status-box {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 3px;
+    }
+}
