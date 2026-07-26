@@ -6,11 +6,36 @@
 
 **Powered by the Inconvenience Engine.**
 
-B.L.O.A.T. is the unnecessary alternative to a URL shortener.
+B.L.O.A.T. is the unnecessary alternative to a URL shortener. It accepts an
+ordinary URL and transforms it into a needlessly long, bureaucratic resource
+locator backed by an equally unnecessary transfer-authorization process.
 
-It accepts an ordinary URL and transforms it into a needlessly long, bureaucratic resource locator backed by an equally unnecessary transfer process.
+Where conventional services optimize links for brevity and convenience,
+B.L.O.A.T. restores the administrative burden the modern web has carelessly
+removed.
 
-Where conventional services optimize links for brevity and convenience, B.L.O.A.T. restores the administrative burden the modern web has carelessly removed.
+## MVP status
+
+The web MVP is implemented.
+
+It currently provides:
+
+- Intake and validation for absolute HTTP and HTTPS URLs
+- Rejection of malformed URLs, unsupported schemes, embedded credentials,
+  control characters, and inputs longer than 2,048 characters
+- Cryptographically random case tokens and magnificently long public URLs
+- A case registry showing the case number, destination, generated link, and
+  opening time
+- An intermediate transfer notice that clearly displays the destination host
+  and full URL
+- A mandatory acknowledgment before an HTTP redirect is issued
+- An appropriately dated enterprise interface implemented in legacy-flavored
+  VB.NET XML literals
+- Automated tests for URL validation, case creation, and the transfer page
+
+Cases are stored in memory. Restarting the application therefore causes
+immediate and comprehensive administrative amnesia, and previously issued
+links stop working.
 
 ## Example
 
@@ -23,89 +48,115 @@ https://example.com/cats
 Amplified output:
 
 ```text
-https://bloat.kgivler.com/department/external-resource-transfer/request/provisionally-approved/case/7f91c28a
+http://localhost:5233/department/bureaucratic-link-processing/division/external-resource-amplification/office/provisional-hypertext-navigation/case/2c77d4c98e1c1df27ee729cd67831b8b0aa64b529ca796fa289148510aae6ed9?caseNumber=BLT-20260726-2C77D4C9&workflowPhase=preliminary-approval-complete&interdepartmentalRoutingStatus=pending&complianceReviewDisposition=no-objection-recorded&minimumRequiredFriction=restored
 ```
 
-Following the amplified link presents an official-looking transfer notice before reluctantly allowing the user to continue to the underlying destination.
+Opening that link presents an external-resource transfer notice. The recipient
+must review the displayed destination and affirmatively acknowledge the obvious
+before B.L.O.A.T. reluctantly redirects them.
 
-## Current Status
+## Run it locally
 
-B.L.O.A.T. is currently in early development.
+### Prerequisites
 
-The initial release will be entirely web-based. Support for unnecessary legacy protocol delivery may be added later.
+- [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
 
-## Initial Scope
+From the repository root:
 
-The first version will:
+```powershell
+dotnet run --project Bloat/Bloat/Bloat.Host
+```
 
-* Accept absolute HTTP and HTTPS URLs.
-* Generate an unnecessarily long public link.
-* Display the generated link for copying and sharing.
-* Present an intermediate resource-transfer page.
-* Clearly display the underlying destination.
-* Require at least one unnecessary acknowledgment before continuing.
-* Redirect the user only after the administrative procedure is complete.
+Then open [http://localhost:5233](http://localhost:5233). The development launch
+profile also opens a browser automatically.
 
-## Amplification Levels
+To run the test suite:
 
-The exact amplification policies are still being developed, but possible levels include:
+```powershell
+dotnet test Bloat/Bloat/Bloat.slnx
+```
 
-### Standard Bureaucracy
+## Administrative workflow
 
-Adds a respectable amount of procedural language without making the link completely unusable.
+1. Submit an underlying destination URL.
+2. Await preliminary eligibility review.
+3. Receive an amplification case number and public resource locator.
+4. Share the amplified locator with an appropriately inconvenienced recipient.
+5. Require that recipient to inspect the destination and complete Form
+   BLT-ACK-0007.
+6. Permit ordinary browser navigation only after acknowledgment is recorded.
 
-### Enterprise Procedure
+## Architecture
 
-Adds departmental routing, approval terminology, case identifiers, and compliance-related metadata.
+The solution targets .NET 10 and separates its responsibilities with all the
+ceremony the task deserves:
 
-### Maximum Administrative Burden
+| Project | Administrative responsibility |
+| --- | --- |
+| `Bloat.Host` | ASP.NET Core host, dependency registration, and static assets |
+| `Bloat.Core` | URL validation, case records, and amplification policy |
+| `Bloat.Data` | Concurrent in-memory case registry |
+| `Bloat.Web` | VB.NET endpoint registration and server-rendered enterprise UI |
+| `Bloat.Tests` | NUnit coverage for core behavior and rendered workflow pages |
 
-Produces a link of unreasonable length for users who believe ordinary inefficiency is not enough.
+The application does not fetch destination content. It records the submitted
+URL, displays it to the recipient, and returns an HTTP redirect only after the
+required acknowledgment.
 
-## The Inconvenience Engine
+## Current limitations
 
-The Inconvenience Engine is the core component responsible for applying amplification policy to otherwise functional URLs.
+- Case records are not persisted across application restarts.
+- There is one approved burden classification: **Enterprise Procedure**.
+- Clipboard automation remains pending procurement; generated links must be
+  copied manually.
+- Authentication, moderation, abuse reporting, disabling links, and rate
+  limiting are not yet implemented.
+- Deployment and production hardening remain outside the MVP.
 
-Its responsibilities may include:
+## Possible future filings
 
-* Generating bureaucratic path segments.
-* Assigning case and request identifiers.
-* Adding harmless procedural metadata.
-* Enforcing acknowledgment requirements.
-* Introducing measured administrative friction.
-* Ensuring that efficiency remains neither guaranteed nor intended.
+Future committees may consider:
 
-## Future Possibilities
+- Persistent case storage and case revocation
+- Rate limiting and abuse-reporting controls
+- Additional amplification levels, including Maximum Administrative Burden
+- Unnecessary progress indicators and expanded acknowledgment procedures
+- Alternative retrieval procedures involving Gopher, Finger, Echo, or other
+  obsolete and deeply inconvenient Internet services
 
-After the web version is working, B.L.O.A.T. may support alternative URL-retrieval procedures involving protocols such as:
+These items are possibilities, not commitments. No department should interpret
+their appearance in this document as approval, scheduling, funding, awareness,
+or acceptance of responsibility.
 
-* Gopher
-* Finger
-* Echo
-* Other obsolete or deeply inconvenient Internet services
-
-These are future possibilities, not part of the initial release.
-
-## Security
+## Security posture
 
 B.L.O.A.T. is intentionally inconvenient, but it should not be deceptive.
 
-The service will:
+The MVP:
 
-* Accept only supported URL schemes.
-* Show the destination host before navigation.
-* Avoid automatic redirects when a link is opened.
-* Rate-limit link creation.
-* Allow abusive or malicious links to be disabled.
-* Avoid fetching arbitrary destination content on the server.
+- Accepts only absolute HTTP and HTTPS destinations
+- Rejects URLs containing embedded usernames or passwords
+- Shows the destination host and full URL before navigation
+- Never redirects automatically when an amplified link is opened
+- Does not retrieve arbitrary destination content on the server
+- Uses 256-bit random public case tokens
+
+The current in-memory registry is suitable for demonstration and local
+development, not production deployment.
 
 ## Philosophy
 
 The modern web has become dangerously convenient.
 
-Links are too short. Redirects are too fast. Users are rarely asked to acknowledge a case number, review a transfer notice, or wait for an unnecessary progress indicator.
+Links are too short. Redirects are too fast. Users are rarely asked to
+acknowledge a case number, review a transfer notice, or wait for an unnecessary
+administrative determination.
 
 B.L.O.A.T. intends to correct this market failure.
+
+## License
+
+B.L.O.A.T. is available under the [MIT License](LICENSE).
 
 ---
 
