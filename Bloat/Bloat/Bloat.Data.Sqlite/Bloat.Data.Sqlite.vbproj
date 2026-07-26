@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<RootNamespace>Bloat.Data.Sqlite</RootNamespace>
+		<TargetFramework>net10.0</TargetFramework>
+		<OptionExplicit>On</OptionExplicit>
+		<OptionStrict>On</OptionStrict>
+		<OptionInfer>On</OptionInfer>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.10" />
+		<PackageReference Include="SQLitePCLRaw.lib.e_sqlite3" Version="2.1.12" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Bloat.Core\Bloat.Core.csproj" />
+	</ItemGroup>
+
+</Project>

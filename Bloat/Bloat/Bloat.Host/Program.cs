@@ -30,17 +30,28 @@
 
 using Bloat.Core.Amplification;
 using Bloat.Core.Urls;
-using Bloat.Data.Amplification;
+using Bloat.Data.Sqlite.Amplification;
 using Bloat.Web;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var databasePath = Path.Combine(builder.Environment.ContentRootPath, "App_Data", "bloat.db");
+
+builder.Services.AddSingleton(new SqliteAmplificationCaseRepository(databasePath));
+
+builder.Services.AddSingleton<IAmplificationCaseRepository>(serviceProvider =>
+        serviceProvider.GetRequiredService<SqliteAmplificationCaseRepository>());
+
 builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddSingleton<DestinationUrlValidator>();
-builder.Services.AddSingleton<IAmplificationCaseRepository, InMemoryAmplificationCaseRepository>();
+// NOTE: Im not sure if this is still needed, but the application seems to work with it commented out.
+//builder.Services.AddSingleton<IAmplificationCaseRepository, InMemoryAmplificationCaseRepository>();
 builder.Services.AddSingleton<AmplificationCaseService>();
 
 var app = builder.Build();
+
+await app.Services.GetRequiredService<SqliteAmplificationCaseRepository>()
+    .InitializeAsync();
 
 app.UseStaticFiles();
 
