@@ -5,7 +5,11 @@
     <TargetFramework>net10.0</TargetFramework>
   </PropertyGroup>
 
-  <ItemGroup>
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
+
+	<ItemGroup>
     <ProjectReference Include="..\Bloat.Core\Bloat.Core.csproj" />
   </ItemGroup>
 
