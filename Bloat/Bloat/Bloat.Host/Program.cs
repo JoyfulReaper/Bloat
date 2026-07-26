@@ -28,12 +28,17 @@
 // stylesheet class names remain unnecessarily long.
 // =============================================================================
 
+using Bloat.Core.Amplification;
 using Bloat.Core.Urls;
+using Bloat.Data.Amplification;
 using Bloat.Web;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddSingleton<DestinationUrlValidator>();
+builder.Services.AddSingleton<IAmplificationCaseRepository, InMemoryAmplificationCaseRepository>();
+builder.Services.AddSingleton<AmplificationCaseService>();
 
 var app = builder.Build();
 
