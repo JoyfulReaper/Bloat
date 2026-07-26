@@ -7,9 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Bloat.Core\Bloat.Core.csproj" />
-    <ProjectReference Include="..\Bloat.Data\Bloat.Data.csproj" />
-    <ProjectReference Include="..\Bloat.Web\Bloat.Web.vbproj" />
+	  <ProjectReference Include="..\Bloat.Core\Bloat.Core.csproj" />
+	  <ProjectReference Include="..\Bloat.Data\Bloat.Data.csproj" />
+	  <ProjectReference Include="..\Bloat.Data.Migrations\Bloat.Data.Migrations.csproj" />
+	  <ProjectReference Include="..\Bloat.Data.Sqlite\Bloat.Data.Sqlite.vbproj" />
+	  <ProjectReference Include="..\Bloat.Web\Bloat.Web.vbproj" />
   </ItemGroup>
 
 </Project>

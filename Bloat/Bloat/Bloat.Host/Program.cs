@@ -30,6 +30,8 @@
 
 using Bloat.Core.Amplification;
 using Bloat.Core.Urls;
+using Bloat.Data.Migrations;
+using Bloat.Data.Migrations.Definitions;
 using Bloat.Data.Sqlite.Amplification;
 using Bloat.Web;
 
@@ -37,24 +39,33 @@ var builder = WebApplication.CreateBuilder(args);
 
 var databasePath = Path.Combine(builder.Environment.ContentRootPath, "App_Data", "bloat.db");
 
-builder.Services.AddSingleton(new SqliteAmplificationCaseRepository(databasePath));
+builder.Services.AddSingleton<TimeProvider>(TimeProvider.System);
+builder.Services.AddSingleton<IDatabaseMigration, Migration0001CreateAmplificationCases>();
+builder.Services.AddSingleton(serviceProvider =>
+    new SqliteMigrationCoordinator(
+        databasePath,
+        serviceProvider.GetServices<IDatabaseMigration>(),
+        serviceProvider.GetRequiredService<TimeProvider>()));
 
-builder.Services.AddSingleton<IAmplificationCaseRepository>(serviceProvider =>
+builder.Services.AddSingleton(new SqliteAmplificationCaseRepository(databasePath));
+builder.Services.AddSingleton<IAmplificationCaseRepository>(
+    serviceProvider =>
         serviceProvider.GetRequiredService<SqliteAmplificationCaseRepository>());
 
-builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddSingleton<DestinationUrlValidator>();
+
 // NOTE: Im not sure if this is still needed, but the application seems to work with it commented out.
 //builder.Services.AddSingleton<IAmplificationCaseRepository, InMemoryAmplificationCaseRepository>();
 builder.Services.AddSingleton<AmplificationCaseService>();
 
 var app = builder.Build();
 
-await app.Services.GetRequiredService<SqliteAmplificationCaseRepository>()
-    .InitializeAsync();
-
 app.UseStaticFiles();
 
 EnterpriseApplicationBootstrapper.RegisterPublicFacingAdministrativeWorkflowEndpoints(app);
+
+await app.Services
+    .GetRequiredService<SqliteMigrationCoordinator>()
+    .ApplyPendingMigrationsAsync();
 
 app.Run();

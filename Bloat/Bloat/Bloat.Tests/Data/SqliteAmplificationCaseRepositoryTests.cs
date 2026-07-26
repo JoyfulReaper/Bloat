@@ -1,5 +1,5 @@
 ﻿/*
- * $Id: SqliteAmplificationCaseRepositoryTests.cs,v 2.1 2011/04/04 05:11:41 qa_db Exp $
+ * $Id: SqliteAmplificationCaseRepositoryTests.cs,v 2.2 2012/06/05 04:18:29 qa_db Exp $
  *
  * DISASTER RECOVERY TESTING:
  *
@@ -7,9 +7,15 @@
  * Production previously used the same directory until audit finding 11-204.
  *
  * Corrective action status: technically complete.
+ *
+ * Revision 2.2:
+ * Repository initialization transferred to the Database Change Governance
+ * Office. Direct schema creation by operational repositories is prohibited.
  */
 
 using Bloat.Core.Amplification;
+using Bloat.Data.Migrations;
+using Bloat.Data.Migrations.Definitions;
 using Bloat.Data.Sqlite.Amplification;
 
 namespace Bloat.Tests.Data;
@@ -65,11 +71,11 @@ public sealed class SqliteAmplificationCaseRepositoryTests
                 DateTimeOffset.FromUnixTimeMilliseconds(
                     1785081600123));
 
+        await ApplyMigrationsAsync();
+
         var firstRepository =
             new SqliteAmplificationCaseRepository(
                 _databasePath);
-
-        await firstRepository.InitializeAsync();
 
         var added =
             await firstRepository.TryAddAsync(expected);
@@ -77,8 +83,6 @@ public sealed class SqliteAmplificationCaseRepositoryTests
         var secondRepository =
             new SqliteAmplificationCaseRepository(
                 _databasePath);
-
-        await secondRepository.InitializeAsync();
 
         var actual =
             await secondRepository.FindByTokenAsync(token);
@@ -109,11 +113,11 @@ public sealed class SqliteAmplificationCaseRepositoryTests
                 DateTimeOffset.FromUnixTimeSeconds(
                     1785081600));
 
+        await ApplyMigrationsAsync();
+
         var repository =
             new SqliteAmplificationCaseRepository(
                 _databasePath);
-
-        await repository.InitializeAsync();
 
         var firstInsert =
             await repository.TryAddAsync(
@@ -128,5 +132,22 @@ public sealed class SqliteAmplificationCaseRepositoryTests
             Assert.That(firstInsert, Is.True);
             Assert.That(secondInsert, Is.False);
         });
+    }
+
+    private async Task ApplyMigrationsAsync()
+    {
+        var migrations =
+            new IDatabaseMigration[]
+            {
+                new Migration0001CreateAmplificationCases()
+            };
+
+        var coordinator =
+            new SqliteMigrationCoordinator(
+                _databasePath,
+                migrations,
+                TimeProvider.System);
+
+        await coordinator.ApplyPendingMigrationsAsync();
     }
 }

@@ -32,17 +32,16 @@ Namespace Amplification
     Public NotInheritable Class SqliteAmplificationCaseRepository
         Implements IAmplificationCaseRepository
 
-        Private ReadOnly _databasePath As String
         Private ReadOnly _connectionString As String
 
         Public Sub New(databasePath As String)
             ArgumentException.ThrowIfNullOrWhiteSpace(databasePath)
 
-            _databasePath = Path.GetFullPath(databasePath)
+            Dim fullDatabasePath = Path.GetFullPath(databasePath)
 
             Dim connectionStringBuilder =
                 New SqliteConnectionStringBuilder With {
-                    .DataSource = _databasePath,
+                    .DataSource = fullDatabasePath,
                     .Mode = SqliteOpenMode.ReadWriteCreate,
                     .Cache = SqliteCacheMode.Shared,
                     .Pooling = False
@@ -50,33 +49,6 @@ Namespace Amplification
 
             _connectionString = connectionStringBuilder.ToString()
         End Sub
-
-        Public Async Function InitializeAsync(Optional cancellationToken As CancellationToken = Nothing) As Task
-
-            Dim databaseDirectory = Path.GetDirectoryName(_databasePath)
-
-            If Not String.IsNullOrWhiteSpace(databaseDirectory) Then
-                Directory.CreateDirectory(databaseDirectory)
-            End If
-
-            Using connection = CreateConnection()
-                Await connection.OpenAsync(cancellationToken)
-
-                Using command = connection.CreateCommand()
-                    command.CommandText =
-                        "CREATE TABLE IF NOT EXISTS AmplificationCases (" &
-                        "Token TEXT NOT NULL PRIMARY KEY, " &
-                        "CaseNumber TEXT NOT NULL UNIQUE, " &
-                        "OriginalUrl TEXT NOT NULL, " &
-                        "AmplifiedRelativeUrl TEXT NOT NULL, " &
-                        "CreatedAtUnixMilliseconds INTEGER NOT NULL" &
-                        ");"
-
-                    Await command.ExecuteNonQueryAsync(cancellationToken)
-                End Using
-            End Using
-
-        End Function
 
         Public Function TryAddAsync(amplificationCase As AmplificationCase, Optional cancellationToken As CancellationToken = Nothing) As ValueTask(Of Boolean) _
             Implements IAmplificationCaseRepository.TryAddAsync
