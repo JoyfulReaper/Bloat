@@ -30,6 +30,8 @@ public sealed class AmplificationCaseService(
         "/office/provisional-hypertext-navigation" +
         "/case";
 
+    public const string AuthorizationRoutePattern = PublicRouteBase + "/{token}/authorize";
+
     public const string PublicRoutePattern = PublicRouteBase + "/{token}";
     private const int MaximumTokenGenerationAttempts = 5;
 
@@ -89,5 +91,16 @@ public sealed class AmplificationCaseService(
             "&interdepartmentalRoutingStatus=pending",
             "&complianceReviewDisposition=no-objection-recorded",
             "&minimumRequiredFriction=restored");
+    }
+
+    public static string BuildAuthorizationRelativeUrl(string token)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(token);
+
+        return string.Concat(
+            PublicRouteBase,
+            "/",
+            token,
+            "/authorize");
     }
 }

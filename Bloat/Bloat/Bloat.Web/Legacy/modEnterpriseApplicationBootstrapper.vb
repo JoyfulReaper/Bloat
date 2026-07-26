@@ -50,6 +50,9 @@ Public Module EnterpriseApplicationBootstrapper
         application.MapGet(AmplificationCaseService.PublicRoutePattern, CType(AddressOf HandleAmplifiedCaseLookupAsync,
             Func(Of HttpRequest, String, IAmplificationCaseRepository, Task(Of IResult))))
 
+        application.MapPost(AmplificationCaseService.AuthorizationRoutePattern, CType(AddressOf HandleExternalResourceAuthorizationAsync,
+            Func(Of HttpRequest, String, IAmplificationCaseRepository, Task(Of IResult))))
+
     End Sub
 
     Private Async Function HandleAmplificationRequestAsync(
@@ -81,20 +84,20 @@ Public Module EnterpriseApplicationBootstrapper
 
     Private Async Function HandleAmplifiedCaseLookupAsync(
         request As HttpRequest,
-         <FromRoute> token As String,
-         <FromServices> repository As IAmplificationCaseRepository) As Task(Of IResult)
+        <FromRoute> token As String,
+        <FromServices> repository As IAmplificationCaseRepository) As Task(Of IResult)
 
         Dim amplificationCase = Await repository.FindByTokenAsync(token, request.HttpContext.RequestAborted)
 
         If amplificationCase Is Nothing Then
             Return Results.NotFound(
-                "No amplification case could be located for the supplied " &
-                "administrative identifier.")
+            "No amplification case could be located for the supplied " &
+            "administrative identifier.")
         End If
 
-        Dim amplifiedUrl = BuildAbsoluteUrl(request, amplificationCase.AmplifiedRelativeUrl)
+        Dim authorizationRelativeUrl = AmplificationCaseService.BuildAuthorizationRelativeUrl(amplificationCase.Token)
 
-        Return Results.Content(AmplificationCaseRegistryPage.Render(amplificationCase, amplifiedUrl), "text/html; charset=utf-8")
+        Return Results.Content(ExternalResourceTransferPage.Render(amplificationCase, authorizationRelativeUrl), "text/html; charset=utf-8")
 
     End Function
 
@@ -106,6 +109,45 @@ Public Module EnterpriseApplicationBootstrapper
             request.Host.Value,
             request.PathBase.Value,
             relativeUrl)
+
+    End Function
+
+    Private Async Function HandleExternalResourceAuthorizationAsync(
+        request As HttpRequest,
+        <FromRoute> token As String,
+        <FromServices> repository As IAmplificationCaseRepository) As Task(Of IResult)
+
+        Dim amplificationCase = Await repository.FindByTokenAsync(token, request.HttpContext.RequestAborted)
+
+        If amplificationCase Is Nothing Then
+            Return Results.NotFound(
+                "The requested transfer authorization references an " &
+                "unknown or administratively forgotten case.")
+        End If
+
+        If Not request.HasFormContentType Then
+            Return Results.BadRequest(
+                "Transfer authorization must be submitted using the " &
+                "approved form-content encoding procedure.")
+        End If
+
+        Dim form = Await request.ReadFormAsync(request.HttpContext.RequestAborted)
+        Dim acknowledged = String.Equals(form("externalResourceAcknowledgement").ToString(), "accepted", StringComparison.Ordinal)
+
+        If Not acknowledged Then
+            Dim authorizationRelativeUrl = AmplificationCaseService.BuildAuthorizationRelativeUrl(amplificationCase.Token)
+
+            Return Results.Content(
+                ExternalResourceTransferPage.Render(
+                    amplificationCase,
+                    authorizationRelativeUrl,
+                    "The mandatory external-resource acknowledgement " &
+                    "was not received."),
+                contentType:="text/html; charset=utf-8",
+                statusCode:=StatusCodes.Status400BadRequest)
+        End If
+
+        Return Results.Redirect(amplificationCase.OriginalUrl)
 
     End Function
 
