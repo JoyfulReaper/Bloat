@@ -5,4 +5,8 @@
     <TargetFramework>net10.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Bloat.Core\Bloat.Core.csproj" />
+  </ItemGroup>
+
 </Project>

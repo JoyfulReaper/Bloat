@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Bloat.Core\Bloat.Core.csproj" />
+  </ItemGroup>
+
 </Project>
