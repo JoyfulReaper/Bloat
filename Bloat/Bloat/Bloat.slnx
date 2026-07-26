@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="Bloat.Core/Bloat.Core.csproj" />
+  <Project Path="Bloat.Data/Bloat.Data.csproj" />
+  <Project Path="Bloat.Host/Bloat.Host.csproj" />
+  <Project Path="Bloat.Tests/Bloat.Tests.csproj" />
+  <Project Path="Bloat.Web/Bloat.Web.vbproj" />
+</Solution>
