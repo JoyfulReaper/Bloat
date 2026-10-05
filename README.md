@@ -6,36 +6,14 @@
 
 **Powered by the Inconvenience Engine.**
 
-B.L.O.A.T. is the unnecessary alternative to a URL shortener. It accepts an
-ordinary URL and transforms it into a needlessly long, bureaucratic resource
-locator backed by an equally unnecessary transfer-authorization process.
+B.L.O.A.T. is the unnecessary alternative to a URL shortener.
 
-Where conventional services optimize links for brevity and convenience,
-B.L.O.A.T. restores the administrative burden the modern web has carelessly
-removed.
+It accepts an ordinary HTTP or HTTPS URL and transforms it into a needlessly long,
+bureaucratic resource locator backed by an equally unnecessary administrative
+workflow.
 
-## MVP status
-
-The web MVP is implemented.
-
-It currently provides:
-
-- Intake and validation for absolute HTTP and HTTPS URLs
-- Rejection of malformed URLs, unsupported schemes, embedded credentials,
-  control characters, and inputs longer than 2,048 characters
-- Cryptographically random case tokens and magnificently long public URLs
-- A case registry showing the case number, destination, generated link, and
-  opening time
-- An intermediate transfer notice that clearly displays the destination host
-  and full URL
-- A mandatory acknowledgment before an HTTP redirect is issued
-- An appropriately dated enterprise interface implemented in legacy-flavored
-  VB.NET XML literals
-- Automated tests for URL validation, case creation, and the transfer page
-
-Cases are stored in memory. Restarting the application therefore causes
-immediate and comprehensive administrative amnesia, and previously issued
-links stop working.
+Where conventional services optimize links for brevity and convenience, B.L.O.A.T.
+restores the procedural burden the modern web has carelessly removed.
 
 ## Example
 
@@ -45,218 +23,237 @@ Input:
 https://example.com/cats
 ```
 
-Amplified output:
+B.L.O.A.T. creates an amplification case and returns something resembling:
 
 ```text
-http://localhost:5233/department/bureaucratic-link-processing/division/external-resource-amplification/office/provisional-hypertext-navigation/case/2c77d4c98e1c1df27ee729cd67831b8b0aa64b529ca796fa289148510aae6ed9?caseNumber=BLT-20260726-2C77D4C9&workflowPhase=preliminary-approval-complete&interdepartmentalRoutingStatus=pending&complianceReviewDisposition=no-objection-recorded&minimumRequiredFriction=restored
+https://bloat.kgivler.com/department/bureaucratic-link-processing/division/external-resource-amplification/office/provisional-hypertext-navigation/case/...
 ```
 
-Opening that link presents an external-resource transfer notice. The recipient
-must review the displayed destination and affirmatively acknowledge the obvious
-before B.L.O.A.T. reluctantly redirects them.
+The resulting URL includes an unnecessarily substantial case identifier and
+procedural metadata.
 
-## Run it locally
+Opening it does **not** immediately redirect to the destination. The user is first
+presented with the appropriate external-resource transfer paperwork and must
+complete the required administrative procedure before navigation is authorized.
 
-### Prerequisites
+## Current Status
 
-- [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
+B.L.O.A.T. currently has a working basic web amplification workflow.
 
-From the repository root:
+The application can:
 
-```powershell
-dotnet run --project Bloat/Bloat/Bloat.Host
-```
+- Validate submitted destination URLs.
+- Accept absolute HTTP and HTTPS destinations.
+- Create an amplification case.
+- Generate a cryptographically random case token.
+- Assign a bureaucratically appropriate case number.
+- Produce an unnecessarily long public URL.
+- Retrieve an existing case by token.
+- Display the underlying destination before navigation.
+- Require explicit authorization before continuing.
+- Complete the external-resource transfer workflow.
 
-Then open [http://localhost:5233](http://localhost:5233). The development launch
-profile also opens a browser automatically.
+Case storage is currently **in-memory only**. Restarting the application therefore
+constitutes a complete records-retention event and removes previously issued cases.
 
-To run the test suite:
-
-```powershell
-dotnet test Bloat/Bloat/Bloat.slnx
-```
-
-## Administrative workflow
-
-1. Submit an underlying destination URL.
-2. Await preliminary eligibility review.
-3. Receive an amplification case number and public resource locator.
-4. Share the amplified locator with an appropriately inconvenienced recipient.
-5. Require that recipient to inspect the destination and complete Form
-   BLT-ACK-0007.
-6. Permit ordinary browser navigation only after acknowledgment is recorded.
+Persistent storage is planned.
 
 ## Architecture
 
-The solution targets .NET 10 and separates its responsibilities with all the
-ceremony the task deserves:
+B.L.O.A.T. is a .NET application split into several deliberately respectable
+enterprise components.
 
-| Project | Administrative responsibility |
-| --- | --- |
-| `Bloat.Host` | ASP.NET Core host, dependency registration, and static assets |
-| `Bloat.Core` | URL validation, case records, and amplification policy |
-| `Bloat.Data` | Concurrent in-memory case registry |
-| `Bloat.Web` | VB.NET endpoint registration and server-rendered enterprise UI |
-| `Bloat.Tests` | NUnit coverage for core behavior and rendered workflow pages |
+### `Bloat.Core`
 
-The application does not fetch destination content. It records the submitted
-URL, displays it to the recipient, and returns an HTTP redirect only after the
-required acknowledgment.
+Contains the application/domain logic, including:
 
-## Current limitations
+- Destination URL validation.
+- Amplification case models.
+- Amplification case creation.
+- Token and case-number generation.
+- Public amplified-route construction.
+- Repository abstractions.
 
-- Case records are not persisted across application restarts.
-- There is one approved burden classification: **Enterprise Procedure**.
-- Clipboard automation remains pending procurement; generated links must be
-  copied manually.
-- Authentication, moderation, abuse reporting, disabling links, and rate
-  limiting are not yet implemented.
-- Deployment and production hardening remain outside the MVP.
+The core layer does not depend on a particular persistence implementation.
 
-## Grand design: cross-protocol retrieval bureaucracy
+### `Bloat.Data`
 
-The planned destination of B.L.O.A.T. is not merely a longer URL. It is a
-protocol obstacle course in which each service discloses only enough information
-to inconvenience the applicant at the next stage.
+Contains persistence implementations for amplification cases.
+
+The current implementation is:
 
 ```text
-Submit normal URL
-        ↓
-Receive absurdly long HTTP URL
-        ↓
-Initial Administrative Referral
-HTTP withholds the destination and issues a Gopher URL
-        ↓
-Legacy Transport Instruction Document
-Gopher provides hexadecimal bytes and Echo instructions
-        ↓
-Binary Round-Trip Confirmation Procedure
-Send bytes to echo.kgivler.com:7 and receive them unchanged
-        ↓
-Decode the returned bytes as UTF-8
-        ↓
-Final Destination Disclosure Service
-Finger looks up the resulting token and finally reveals the URL
+InMemoryAmplificationCaseRepository
 ```
 
-The protocol stages have been assigned the following departmental names:
+Cases are stored in a concurrent in-memory dictionary keyed by their generated
+token.
 
-| Protocol | Administrative function |
-| --- | --- |
-| HTTP | Initial Administrative Referral |
-| Gopher | Legacy Transport Instruction Document |
-| Echo | Binary Round-Trip Confirmation Procedure |
-| Finger | Final Destination Disclosure Service |
+This is intentionally temporary infrastructure and means amplified links do not
+survive an application restart.
 
-### One token, several departments
+### `Bloat.Web`
 
-A single fixed-length token can drive the entire procedure:
+Contains the public-facing administrative workflow.
+
+In accordance with applicable enterprise mandates, portions of the web workflow
+are implemented in VB.NET and presented with appropriately legacy-enterprise
+styling.
+
+The workflow includes the request, preliminary-review, case-registry, and
+external-resource-transfer pages.
+
+### `Bloat.Host`
+
+The ASP.NET Core host.
+
+It configures dependency injection, static files, the current case repository,
+and delegates endpoint registration to the enterprise application bootstrapper.
+
+### `Bloat.Tests`
+
+Contains automated coverage for core URL validation, amplification-case behavior,
+and portions of the public web workflow.
+
+## Amplification Cases
+
+Each approved amplification request produces an `AmplificationCase` containing:
+
+- A cryptographically random token.
+- A human-readable B.L.O.A.T. case number.
+- The original destination URL.
+- The amplified relative URL.
+- The UTC creation timestamp.
+
+Case numbers follow the general form:
 
 ```text
-Token → Original URL
+BLT-YYYYMMDD-XXXXXXXX
 ```
 
-For example:
+Public amplified URLs are deliberately routed through:
 
 ```text
-42fd9e6b57384060a367e93e950283094ea4dbe7a467496e930f5bb68d021eed
+/department/bureaucratic-link-processing
+/division/external-resource-amplification
+/office/provisional-hypertext-navigation
+/case/{token}
 ```
 
-The Gopher document renders the UTF-8 bytes of that token as hexadecimal:
+Additional query parameters record important administrative facts such as
+workflow phase, routing status, compliance disposition, and whether the minimum
+required level of friction has been restored.
 
-```text
-34 32 66 64 39 65 36 62 35 37 33 38 34 30 36 30
-61 33 36 37 65 39 33 65 39 35 30 32 38 33 30 39
-34 65 61 34 64 62 65 37 61 34 36 37 34 39 36 65
-39 33 30 66 35 62 62 36 38 64 30 32 31 65 65 64
-```
+## Amplification Levels
 
-Echo returns those bytes unchanged. Decoding them as UTF-8 yields the original
-64-character token, which becomes:
+The long-term design allows for multiple levels of unnecessary procedure.
 
-```console
-finger 42fd9e6b57384060a367e93e950283094ea4dbe7a467496e930f5bb68d021eed@finger.kgivler.com
-```
+### Standard Bureaucracy
 
-Finger can then use the token to retrieve the original URL:
+Adds a respectable amount of procedural language without making the link
+completely unusable.
 
-```text
-Login: 42fd9e6b57384060a367e93e950283094ea4dbe7a467496e930f5bb68d021eed
-Name: External Hypertext Resource Disclosure Record
-Directory: /world/wide/web
-Shell: /usr/bin/curl
+### Enterprise Procedure
 
-Following completion of the approved retrieval procedure,
-the requested destination is:
+Adds departmental routing, approval terminology, case identifiers, compliance
+metadata, and other normal consequences of organizational maturity.
 
-https://example.com/cats
+### Maximum Administrative Burden
 
-B.L.O.A.T. thanks you for tolerating the process.
-```
+For situations where ordinary inefficiency is insufficient.
 
-No separate Echo challenge model is required initially. A sufficiently
-insubordinate user can bypass Echo by decoding the Gopher bytes directly; that
-is acceptable because Echo provides ceremonial friction, not security.
+This level is intended to support substantially more elaborate transfer
+procedures, potentially including cross-protocol administrative requirements.
 
-Maximum Administrative Burden may eventually require the Echo service to record
-an approved round trip before Finger releases the destination. This would make
-the useless step technically mandatory, which is the natural endpoint of
-enterprise governance.
+Not all amplification levels are implemented yet.
 
-### Planned filings
+## The Inconvenience Engine
 
-- Persistent case storage and case revocation
-- Gopher, Echo, and Finger services sharing the case-token registry
-- Rate limiting and abuse-reporting controls
-- Additional amplification levels, including Maximum Administrative Burden
-- Unnecessary progress indicators and expanded acknowledgment procedures
-- Optional proof that the ceremonial Echo round trip actually occurred
+The Inconvenience Engine is the conceptual core responsible for applying
+amplification policy to otherwise functional URLs.
 
-These items describe the intended direction, not the current MVP. No department
-should interpret their appearance in this document as approval, scheduling,
-funding, awareness, or acceptance of responsibility.
+Its responsibilities include or may eventually include:
 
-## Security posture
+- Generating bureaucratic path segments.
+- Assigning case and request identifiers.
+- Adding harmless procedural metadata.
+- Enforcing acknowledgment requirements.
+- Introducing measured administrative friction.
+- Selecting amplification policies.
+- Coordinating unnecessarily complicated transfer procedures.
+- Ensuring that efficiency remains neither guaranteed nor intended.
+
+## Future Possibilities
+
+Potential future work includes:
+
+- Persistent case storage.
+- Case disabling and revocation.
+- Multiple amplification/burden levels.
+- Additional acknowledgment and approval stages.
+- More extensive case-history and administrative metadata.
+- Gopher-based transfer procedures.
+- Finger-based status or lookup procedures.
+- Echo-based authorization steps.
+- Other obsolete, inappropriate, or deeply inconvenient Internet protocols.
+
+Legacy protocol support is intentionally future work and is not required for the
+normal web workflow.
+
+## Security
 
 B.L.O.A.T. is intentionally inconvenient, but it should not be deceptive.
 
-The MVP:
+The service is designed to:
 
-- Accepts only absolute HTTP and HTTPS destinations
-- Rejects URLs containing embedded usernames or passwords
-- Shows the destination host and full URL before navigation
-- Never redirects automatically when an amplified link is opened
-- Does not retrieve arbitrary destination content on the server
-- Uses 256-bit random public case tokens
+- Accept only explicitly supported URL schemes.
+- Clearly display the destination before navigation.
+- Avoid automatic redirects when an amplified link is opened.
+- Generate unpredictable public case tokens.
+- Avoid fetching arbitrary destination content on the server.
+- Allow abusive or malicious cases to be disabled in a future persistent model.
+- Apply rate limiting to case creation before public deployment.
 
-The current in-memory registry is suitable for demonstration and local
-development, not production deployment.
+B.L.O.A.T. should make navigation annoying, not unsafe.
+
+## Development
+
+The solution currently contains:
+
+```text
+Bloat.Core
+Bloat.Data
+Bloat.Host
+Bloat.Web
+Bloat.Tests
+```
+
+Build and test with the .NET SDK:
+
+```bash
+dotnet build
+dotnet test
+```
+
+Run the host project with:
+
+```bash
+dotnet run --project Bloat/Bloat/Bloat.Host
+```
 
 ## Philosophy
 
 The modern web has become dangerously convenient.
 
-Links are too short. Redirects are too fast. Users are rarely asked to
-acknowledge a case number, review a transfer notice, or wait for an unnecessary
-administrative determination.
+Links are too short.
+
+Redirects are too fast.
+
+Users are rarely assigned a case number, routed through the appropriate
+department, presented with a compliance disposition, or required to acknowledge
+that the minimum required level of friction has been restored.
 
 B.L.O.A.T. intends to correct this market failure.
-
-## Emotional impact assessment
-
-B.L.O.A.T. feels like a joke that accidentally discovered a legitimate systems
-architecture. It is playful, committed to its premise, and just plausible
-enough to be dangerous. Every additional protocol makes the design more
-technically coherent and less reasonable to use—the exact combination that
-makes the project delightful.
-
-It is no longer merely a URL lengthener. It is a **cross-protocol URL retrieval
-bureaucracy**, which is much more distinctive and much stupider in exactly the
-right way.
-
-## License
-
-B.L.O.A.T. is available under the [MIT License](LICENSE).
 
 ---
 
