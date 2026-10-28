@@ -114,16 +114,16 @@ Public Module EnterpriseApplicationBootstrapper
 
         If AmplificationCaseExpiration.IsExpired(amplificationCase, timeProvider.GetUtcNow()) Then
             Return Results.Content(
-                "CASE EXPIRED: Your authorization to access this external hypertext " &
-                "resource has been administratively terminated. " &
-                "Please submit a new application using Form BLT-ERAR-0001.",
-                contentType:="text/plain; charset=utf-8",
-                statusCode:=StatusCodes.Status410Gone)
+            AmplificationCaseExpiredPage.Render(amplificationCase),
+            contentType:="text/html; charset=utf-8",
+            statusCode:=StatusCodes.Status410Gone)
         End If
 
         Dim authorizationRelativeUrl = AmplificationCaseService.BuildAuthorizationRelativeUrl(amplificationCase.Token)
 
-        Return Results.Content(ExternalResourceTransferPage.Render(amplificationCase, authorizationRelativeUrl), "text/html; charset=utf-8")
+        Return Results.Content(
+        ExternalResourceTransferPage.Render(amplificationCase, authorizationRelativeUrl),
+        contentType:="text/html; charset=utf-8")
 
     End Function
 
@@ -148,39 +148,39 @@ Public Module EnterpriseApplicationBootstrapper
 
         If amplificationCase Is Nothing Then
             Return Results.NotFound(
-                "The requested transfer authorization references an " &
-                "unknown or administratively forgotten case.")
+            "The requested transfer authorization references an " &
+            "unknown or administratively forgotten case.")
         End If
 
         If AmplificationCaseExpiration.IsExpired(amplificationCase, timeProvider.GetUtcNow()) Then
             Return Results.Content(
-                "CASE EXPIRED: Your authorization to access this external hypertext " &
-                "resource has been administratively terminated. " &
-                "Please submit a new application using Form BLT-ERAR-0001.",
-                contentType:="text/plain; charset=utf-8",
-                statusCode:=StatusCodes.Status410Gone)
+            AmplificationCaseExpiredPage.Render(amplificationCase),
+            contentType:="text/html; charset=utf-8",
+            statusCode:=StatusCodes.Status410Gone)
         End If
 
         If Not request.HasFormContentType Then
             Return Results.BadRequest(
-                "Transfer authorization must be submitted using the " &
-                "approved form-content encoding procedure.")
+            "Transfer authorization must be submitted using the " &
+            "approved form-content encoding procedure.")
         End If
 
         Dim form = Await request.ReadFormAsync(request.HttpContext.RequestAborted)
-        Dim acknowledged = String.Equals(form("externalResourceAcknowledgement").ToString(), "accepted", StringComparison.Ordinal)
+        Dim acknowledged = String.Equals(
+        form("externalResourceAcknowledgement").ToString(),
+        "accepted",
+        StringComparison.Ordinal)
 
         If Not acknowledged Then
             Dim authorizationRelativeUrl = AmplificationCaseService.BuildAuthorizationRelativeUrl(amplificationCase.Token)
 
             Return Results.Content(
-                ExternalResourceTransferPage.Render(
-                    amplificationCase,
-                    authorizationRelativeUrl,
-                    "The mandatory external-resource acknowledgement " &
-                    "was not received."),
-                contentType:="text/html; charset=utf-8",
-                statusCode:=StatusCodes.Status400BadRequest)
+            ExternalResourceTransferPage.Render(
+                amplificationCase,
+                authorizationRelativeUrl,
+                "The mandatory external-resource acknowledgement was not received."),
+            contentType:="text/html; charset=utf-8",
+            statusCode:=StatusCodes.Status400BadRequest)
         End If
 
         Return Results.Redirect(amplificationCase.OriginalUrl)
