@@ -53,10 +53,10 @@ Public Module EnterpriseApplicationBootstrapper
             Func(Of HttpRequest, DestinationUrlValidator, AmplificationCaseService, Task(Of IResult))))
 
         application.MapGet(AmplificationCaseService.PublicRoutePattern, CType(AddressOf HandleAmplifiedCaseLookupAsync,
-            Func(Of HttpRequest, String, IAmplificationCaseRepository, Task(Of IResult))))
+            Func(Of HttpRequest, String, IAmplificationCaseRepository, TimeProvider, Task(Of IResult))))
 
         application.MapPost(AmplificationCaseService.AuthorizationRoutePattern, CType(AddressOf HandleExternalResourceAuthorizationAsync,
-            Func(Of HttpRequest, String, IAmplificationCaseRepository, Task(Of IResult))))
+            Func(Of HttpRequest, String, IAmplificationCaseRepository, TimeProvider, Task(Of IResult))))
 
     End Sub
 
@@ -101,7 +101,8 @@ Public Module EnterpriseApplicationBootstrapper
     Private Async Function HandleAmplifiedCaseLookupAsync(
         request As HttpRequest,
         <FromRoute> token As String,
-        <FromServices> repository As IAmplificationCaseRepository) As Task(Of IResult)
+        <FromServices> repository As IAmplificationCaseRepository,
+        <FromServices> timeProvider As TimeProvider) As Task(Of IResult)
 
         Dim amplificationCase = Await repository.FindByTokenAsync(token, request.HttpContext.RequestAborted)
 
@@ -109,6 +110,15 @@ Public Module EnterpriseApplicationBootstrapper
             Return Results.NotFound(
             "No amplification case could be located for the supplied " &
             "administrative identifier.")
+        End If
+
+        If AmplificationCaseExpiration.IsExpired(amplificationCase, timeProvider.GetUtcNow()) Then
+            Return Results.Content(
+                "CASE EXPIRED: Your authorization to access this external hypertext " &
+                "resource has been administratively terminated. " &
+                "Please submit a new application using Form BLT-ERAR-0001.",
+                contentType:="text/plain; charset=utf-8",
+                statusCode:=StatusCodes.Status410Gone)
         End If
 
         Dim authorizationRelativeUrl = AmplificationCaseService.BuildAuthorizationRelativeUrl(amplificationCase.Token)
@@ -131,7 +141,8 @@ Public Module EnterpriseApplicationBootstrapper
     Private Async Function HandleExternalResourceAuthorizationAsync(
         request As HttpRequest,
         <FromRoute> token As String,
-        <FromServices> repository As IAmplificationCaseRepository) As Task(Of IResult)
+        <FromServices> repository As IAmplificationCaseRepository,
+        <FromServices> timeProvider As TimeProvider) As Task(Of IResult)
 
         Dim amplificationCase = Await repository.FindByTokenAsync(token, request.HttpContext.RequestAborted)
 
@@ -139,6 +150,15 @@ Public Module EnterpriseApplicationBootstrapper
             Return Results.NotFound(
                 "The requested transfer authorization references an " &
                 "unknown or administratively forgotten case.")
+        End If
+
+        If AmplificationCaseExpiration.IsExpired(amplificationCase, timeProvider.GetUtcNow()) Then
+            Return Results.Content(
+                "CASE EXPIRED: Your authorization to access this external hypertext " &
+                "resource has been administratively terminated. " &
+                "Please submit a new application using Form BLT-ERAR-0001.",
+                contentType:="text/plain; charset=utf-8",
+                statusCode:=StatusCodes.Status410Gone)
         End If
 
         If Not request.HasFormContentType Then
