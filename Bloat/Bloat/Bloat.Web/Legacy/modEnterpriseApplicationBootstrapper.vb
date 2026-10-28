@@ -44,6 +44,11 @@ Public Module EnterpriseApplicationBootstrapper
                 Return Results.Content(AmplificationRequestPage.Render(), "text/html; charset=utf-8")
             End Function)
 
+        application.MapGet("/terms",
+            Function()
+                Return Results.Content(TermsOfServicePage.Render(), "text/html; charset=utf-8")
+            End Function)
+
         application.MapPost("/amplification-request", CType(AddressOf HandleAmplificationRequestAsync,
             Func(Of HttpRequest, DestinationUrlValidator, AmplificationCaseService, Task(Of IResult))))
 
@@ -61,6 +66,17 @@ Public Module EnterpriseApplicationBootstrapper
         <FromServices> caseService As AmplificationCaseService) As Task(Of IResult)
 
         Dim form = Await request.ReadFormAsync(request.HttpContext.RequestAborted)
+
+        Dim termsAccepted = String.Equals(
+            form("termsAccepted").ToString(),
+            "accepted",
+            StringComparison.Ordinal)
+
+        If Not termsAccepted Then
+            Return Results.BadRequest(
+                "Form BLT-ERAR-0001 rejected: Mandatory Terms of Service acknowledgement missing.")
+        End If
+
         Dim submittedUrl = form("destinationUrl").ToString()
         Dim validation = validator.Validate(submittedUrl)
 

@@ -110,6 +110,26 @@ Public NotInheritable Class AmplificationRequestPage
                                 </div>
 
                                 <div class="form-row">
+                                    <label>
+                                        <input
+                                            type="checkbox"
+                                            name="termsAccepted"
+                                            value="accepted"
+                                            required="required"/>
+
+                                        I have read and agree to the
+                                        <a href="/terms" target="_blank" rel="noopener noreferrer">
+                                            Terms of Service
+                                        </a>.
+                                    </label>
+
+                                    <p class="form-help">
+                                        Acceptance is mandatory. The Legal Affairs Department
+                                        regrets that applicants are now expected to read things.
+                                    </p>
+                                </div>
+
+                                <div class="form-row">
                                     <button type="submit">
                                         SUBMIT REQUEST FOR PROCESSING
                                     </button>

@@ -169,6 +169,18 @@ Public NotInheritable Class AmplificationCaseRegistryPage
                                         outside the retention guarantee.
                                     </aside>
 
+                                    <p class="form-help">
+                                        Use of this service is subject to the
+                                        <a href="/terms">Terms of Service</a>.
+
+                                        Applicants are strongly encouraged to review all
+                                        applicable legal disclosures before submitting
+                                        Form BLT-ERAR-0001.
+
+                                        Failure to read the terms does not exempt applicants
+                                        from having wasted their time.
+                                    </p>
+
                                     <div class="form-row">
                                         <button
                                             type="button"
