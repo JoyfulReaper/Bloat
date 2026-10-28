@@ -157,6 +157,25 @@ Public NotInheritable Class AmplificationCaseRegistryPage
                                             readonly="readonly"/>
                                     </div>
 
+                                    <div class="form-row">
+                                        <label>
+                                            Authorization Expiration Date
+                                        </label>
+
+                                        <input
+                                            type="text"
+                                            value=<%= AmplificationCaseExpiration.GetExpirationUtc(amplificationCase).ToString("u") %>
+                                            readonly="readonly"/>
+
+                                        <p class="form-help">
+                                            Authorization automatically expires thirty days after
+                                            case registration.
+
+                                            Extensions require written approval from the
+                                            Records Retention Committee, which was dissolved in 2009.
+                                        </p>
+                                    </div>
+
                                     <aside class="administrative-notice">
                                         <strong>
                                             DURABLE RECORDS DISCLOSURE
