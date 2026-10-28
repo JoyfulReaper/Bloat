@@ -77,7 +77,7 @@ Public NotInheritable Class AmplificationCaseRegistryPage
                             </div>
 
                             <div class="metadata-item">
-                                RETENTION: VOLATILE
+                                RETENTION: EMBEDDED RELATIONAL
                             </div>
                         </div>
 
@@ -159,13 +159,14 @@ Public NotInheritable Class AmplificationCaseRegistryPage
 
                                     <aside class="administrative-notice">
                                         <strong>
-                                            VOLATILE RECORDS DISCLOSURE
+                                            DURABLE RECORDS DISCLOSURE
                                         </strong>
 
-                                        This record is retained exclusively in
-                                        application memory. Restarting the system
-                                        may result in immediate and comprehensive
-                                        administrative amnesia.
+                                        This record has been committed to the approved embedded
+                                        relational records-retention subsystem and is expected to
+                                        survive ordinary application restarts. Administrative
+                                        deletion, disk failure, and gross operator negligence remain
+                                        outside the retention guarantee.
                                     </aside>
 
                                     <div class="form-row">
